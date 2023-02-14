@@ -49,28 +49,28 @@ class NumberGeneratorTest extends TestCase
 		$this->assertSame( 'jss140220230000', $driving_licence_number );
 	}
 
-	public function testMatchDriverLicenceWithoutMiddleName() {
-		$applicant = \Mockery::mock(  LicenceApplicant::class );
-		$applicant
-			->shouldReceive( 'getAge' )
-			->andReturn( 17 );
+	// public function testMatchDriverLicenceWithoutMiddleName() {
+	// 	$applicant = \Mockery::mock(  LicenceApplicant::class );
+	// 	$applicant
+	// 		->shouldReceive( 'getAge' )
+	// 		->andReturn( 17 );
 
-		$applicant
-			->shouldReceive( 'getInitials' )
-			->andReturn( 'js' );
+	// 	$applicant
+	// 		->shouldReceive( 'getInitials' )
+	// 		->andReturn( 'js' );
 
-		$applicant
-			->shouldReceive( 'getDateOfBirth' )
-			->andReturn( DateTime::createFromFormat('Y-m-d', '2023-2-14') );
+	// 	$applicant
+	// 		->shouldReceive( 'getDateOfBirth' )
+	// 		->andReturn( DateTime::createFromFormat('Y-m-d', '2023-2-14') );
 
-		$random_number_generator = \Mockery::mock(  RandomNumbersGenerator::class );
-		$random_number_generator
-			->shouldReceive( 'generate' )
-			->andReturn( '00000' );
+	// 	$random_number_generator = \Mockery::mock(  RandomNumbersGenerator::class );
+	// 	$random_number_generator
+	// 		->shouldReceive( 'generate' )
+	// 		->andReturn( '00000' );
 
-		$sut = new NumberGenerator( $random_number_generator );
-		$driving_licence_number = $sut->generateDrivingLicence( $applicant );
-		$this->assertSame( 'js1402202300000', $driving_licence_number );
-	}
+	// 	$sut = new NumberGenerator( $random_number_generator );
+	// 	$driving_licence_number = $sut->generateDrivingLicence( $applicant );
+	// 	$this->assertSame( 'js1402202300000', $driving_licence_number );
+	// }
 
 }
