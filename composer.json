@@ -20,6 +20,9 @@
             "email": "braddle@gmail.com"
         }
     ],
+    "scripts": {
+        "testut": "docker-compose exec app vendor/bin/phpunit"
+    },
     "config": {
         "allow-plugins": {
             "infection/extension-installer": true

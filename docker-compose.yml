@@ -1,0 +1,12 @@
+version: "3.0"
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: php-uk-2023
+    container_name: php-uk-2023-container
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
