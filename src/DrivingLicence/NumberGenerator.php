@@ -10,12 +10,16 @@ class NumberGenerator
 	}
 
 	public function generateDrivingLicence( $applicant ) {
-		return 'jss140220230000';
-		// if ( 17 > $applicant->getAge() ) {
-		// 	throw new InvalidDriverException();
-		// }
 
-		// return $applicant->getInitials() . $applicant->getDateOfBirth()->format('dmY') . $this->random_number_generator->generate();
+		if ( 17 > $applicant->getAge() ) {
+			throw new InvalidDriverException();
+		}
+
+		$return = $applicant->getInitials() . $applicant->getDateOfBirth()->format('dmY');
+
+		$extra_numbers_to_generate = 15 - strlen( $return );
+
+		return $return . $this->random_number_generator->generate( $extra_numbers_to_generate );
 	}
 
 }
