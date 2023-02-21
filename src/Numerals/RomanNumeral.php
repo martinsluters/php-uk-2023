@@ -5,111 +5,99 @@ namespace Braddle\PhpUk2023\Numerals;
 
 class RomanNumeral {
 
-	public static function convert( int $arabic_number ) {
+	public static function convert( int $input_arabic_number ) {
 
-		if ( 4000 < $arabic_number || 1 > $arabic_number) {
+		if ( 4000 < $input_arabic_number || 1 > $input_arabic_number) {
 			throw new InvalidRomanNumberException( 'Converter is limited to conversion of anything between 1 and 4000' );
 		}
 
-		$number = '';
+		$roman_numerals_rules_map = [
+			'M' => [
+				'numeral' => 'M',
+				'numeral_decremental' => 'C',
+				'numeral_type' => 'full',
+				'arabic_number' => 1000
+			],
+			'D' => [
+				'numeral' => 'D',
+				'numeral_decremental' => 'C',
+				'numeral_type' => 'half',
+				'arabic_number' => 500
+			],
+			'C' => [
+				'numeral' => 'C',
+				'numeral_decremental' => 'X',
+				'numeral_type' => 'full',
+				'arabic_number' => 100
+			],
+			'L' => [
+				'numeral' => 'L',
+				'numeral_decremental' => 'X',
+				'numeral_type' => 'half',
+				'arabic_number' => 50
+			],
+			'X' => [
+				'numeral' => 'X',
+				'numeral_decremental' => 'I',
+				'numeral_type' => 'full',
+				'arabic_number' => 10
+			],
+			'V' => [
+				'numeral' => 'V',
+				'numeral_decremental' => 'I',
+				'numeral_type' => 'half',
+				'arabic_number' => 5
+			],
+			'I' => [
+				'numeral' => 'I',
+				'numeral_decremental' => null,
+				'numeral_type' => 'full',
+				'arabic_number' => 1
+			]
+		];
 
-		// M = 1000
-		if ( 0 < (int) ( $arabic_number / 1000 ) ) {
-			$number .= str_repeat( 'M', (int) ( $arabic_number / 1000 ) );
-			$arabic_number -= (int) ( $arabic_number / 1000 ) * 1000;
-		}
+		$return_roman_numeral = '';
 
-		// CM = 900
-		if (
-			900 <= $arabic_number % 1000 &&
-			1000 > $arabic_number % 1000
-		) {
-			$number .= 'CM';
-			$arabic_number -= 900;
-		}
+		array_map(
+			function( array $rule ) use ( &$input_arabic_number, &$return_roman_numeral, $roman_numerals_rules_map  ) {
 
-		// D = 500
-		if (
-			500 <= $arabic_number
-		) {
-			$number .= 'D';
-			$arabic_number -= 500;
-		}
+				list( 'numeral' => $rule_numeral, 'numeral_decremental' => $rule_numeral_decremental, 'numeral_type' => $rule_numeral_type, 'arabic_number' => $rule_arabic_number ) = $rule;
+				$division_floor_value = (int) ( $input_arabic_number / $rule_arabic_number );
 
-		// CD = 400
-		if (
-			400 <= $arabic_number % 1000 &&
-			500 > $arabic_number % 1000
-		) {
-			$number .= 'CD';
-			$arabic_number -= 400;
-		}
+				if ( 'full' === $rule_numeral_type ) {
 
-		// C = 100
-		if ( 0 < (int) ( $arabic_number / 100 ) ) {
-			$number .= str_repeat( 'C', (int) ( $arabic_number / 100 ) );
-			$arabic_number -= (int) ( $arabic_number / 100 ) * 100;
-		}
+					// 1, 10, 100, 1000
+					if ( 0 < $division_floor_value ) {
+						$return_roman_numeral .= str_repeat( $rule_numeral, $division_floor_value );
+						$input_arabic_number -= $division_floor_value * $rule_arabic_number;
+					}
 
-		// XC = 90
-		if (
-			90 <= $arabic_number % 100 &&
-			100 > $arabic_number % 100
-		) {
-			$number .= 'XC';
-			$arabic_number -= 90;
-		}
+				} else {
 
-		// L = 50
-		if (
-			50 <= $arabic_number
-		) {
-			$number .= 'L';
-			$arabic_number -= 50;
-		}
+					// 5, 50, 500
+					if (
+						$rule_arabic_number <= $input_arabic_number
+					) {
+						$return_roman_numeral .= $rule_numeral;
+						$input_arabic_number -= $rule_arabic_number;
+					}
 
-		// XL = 40
-		if (
-			40 <= $arabic_number % 100 &&
-			50 > $arabic_number % 100
-		) {
-			$number .= 'XL';
-			$arabic_number -= 40;
-		}
+				}
 
-		// X = 10
-		if ( 0 < (int) ( $arabic_number / 10 ) ) {
-			$number .= str_repeat( 'X', (int) ( $arabic_number / 10 ) );
-			$arabic_number -= (int) ( $arabic_number / 10 ) * 10;
-		}
+				// 4, 9, 40, 90, 400, 900
+				if (
+					! is_null( $rule_numeral_decremental ) &&
+					( $rule_arabic_number - $roman_numerals_rules_map[ $rule_numeral_decremental ]['arabic_number'] )  <= $input_arabic_number % ( $roman_numerals_rules_map[ $rule_numeral_decremental ]['arabic_number'] * 10 ) &&
+					$rule_arabic_number > $input_arabic_number % ( $roman_numerals_rules_map[ $rule_numeral_decremental ]['arabic_number'] * 10 )
+				) {
+					$return_roman_numeral .= $rule_numeral_decremental . $rule_numeral;
+					$input_arabic_number -= ( $rule_arabic_number - $roman_numerals_rules_map[ $rule_numeral_decremental ]['arabic_number'] );
+				}
 
-		// IX = 9
-		if ( 9 === $arabic_number % 10 ) {
-			$number .= 'IX';
-			$arabic_number -= 9;
-		}
+			},
+			$roman_numerals_rules_map
+		);
 
-		// V = 5
-		if (
-			5 <= $arabic_number
-		) {
-			$number .= 'V';
-			$arabic_number -= 5;
-		}
-
-		// IV = 4
-		if (
-			4 === $arabic_number
-		) {
-			$number .= 'IV';
-			$arabic_number -= 4;
-		}
-
-
-		if ( 0 < $arabic_number ) {
-			$number .= str_repeat( 'I', $arabic_number );
-		}
-
-		return $number;
+		return $return_roman_numeral;
 	}
 }
