@@ -111,14 +111,13 @@ class RomanNumeralTest extends TestCase
 		$this->assertSame( 'MMMCCCXXXIII', RomanNumeral::convert( 3333 ) );
 	}
 
-
 	// All about 5
 	public function testThat5ConvertsToV() {
 		$this->assertSame( 'V', RomanNumeral::convert( 5 ) );
 	}
 
 	public function testThat8ConvertsToVIII() {
-		$this->assertSame( RomanNumeral::convert( 8 ), 'VIII' );
+		$this->assertSame( 'VIII', RomanNumeral::convert( 8 ) );
 	}
 
 	// All about 50
